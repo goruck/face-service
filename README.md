@@ -16,7 +16,6 @@ face-service/
 ├── requirements-gpu.txt     # Dependencies for GPU build
 ├── face.env.example         # Example environment config
 ├── face-service@.service    # Systemd unit template
-├── .venv/                   # Virtual environment (local, ignored in git)
 └── README.md                # This file
 ```
 
