@@ -1,0 +1,24 @@
+[Unit]
+Description=Face Service (%i) - FastAPI + InsightFace
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=%i
+Group=%i
+EnvironmentFile=/etc/face-service/%i.env
+Environment=PYTHONUNBUFFERED=1
+WorkingDirectory=%h
+
+ExecStart=/usr/bin/bash -lc '\
+  cd "${APP_DIR}"; \
+  exec "${VENV_DIR}/bin/uvicorn" "${APP_MODULE}" \
+      --host "${HOST}" --port "${PORT}" \
+'
+
+Restart=always
+RestartSec=2
+TimeoutStartSec=60
+
+[Install]
+WantedBy=multi-user.target
