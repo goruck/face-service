@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  cpu-smoke:
+    name: CPU build • lint + smoke test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-cpu.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install CPU deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-cpu.txt
+          # Optional linters (safe to remove if you don't use them)
+          pip install ruff==0.6.9
+
+      - name: Lint (ruff)
+        run: |
+          ruff check .
+
+      - name: Launch app (background)
+        env:
+          USE_CPU: "true"
+          GPU_ID: "0"
+          FACE_MODEL: "buffalo_l"
+        run: |
+          # Run from repo root; adjust if your module name/file changes
+          uvicorn app:app --host 127.0.0.1 --port 8000 &
+          echo $! > uvicorn.pid
+          # Wait for server to be ready
+          for i in {1..30}; do
+            sleep 1
+            curl -fsS http://127.0.0.1:8000/status && break || true
+          done
+
+      - name: Smoke test endpoints
+        run: |
+          curl -v http://127.0.0.1:8000/status
+
+      - name: Shutdown app
+        if: always()
+        run: |
+          if [ -f uvicorn.pid ]; then
+            kill $(cat uvicorn.pid) || true
+            rm -f uvicorn.pid
+          fi
+
+  gpu-install:
+    name: GPU build • install only
+    runs-on: ubuntu-latest
+    # We don't run the server here (no GPU on runners). This only verifies requirements resolve.
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-gpu-${{ hashFiles('requirements-gpu.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-gpu-
+
+      - name: Install GPU deps (no runtime)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-gpu.txt
+          # Don't import/run anything that requires actual GPU runtime
