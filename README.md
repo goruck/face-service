@@ -25,7 +25,7 @@ face-service/
 You can clone this repo anywhere (e.g., `/home/<user>/Develop/face-service` or `/opt/face-service`):
 
 ```bash
-git clone https://github.com/yourusername/face-service.git
+git clone https://github.com/goruck/face-service.git
 cd face-service
 ```
 
