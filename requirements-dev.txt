@@ -1,0 +1,2 @@
+# Development / linting tools
+ruff>=0.6.9
