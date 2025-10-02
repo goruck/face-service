@@ -1,0 +1,26 @@
+[MASTER]
+ignore-paths = .venv
+
+[MESSAGES CONTROL]
+disable =
+  C0111,  # missing-docstring
+  C0103,  # invalid-name (Ruff handles naming via "N")
+  C0411,  # wrong-import-order (Ruff/isort handles)
+  C0412,  # ungrouped-imports (Ruff handles)
+  C0413,  # wrong-import-position (Ruff handles)
+  W0611,  # unused-import (Ruff handles)
+  W0612,  # unused-variable (Ruff handles)
+  W0622,  # redefined-builtin (Ruff handles)
+  R0913,  # too-many-arguments (common in FastAPI endpoints)
+  R0903,  # too-few-public-methods
+  R0902,  # too-many-instance-attributes
+  R0915,  # too-many-statements
+  R0912,  # too-many-branches
+  R0903,  # too-few-public-methods
+  W1514   # unspecified-encoding (we control file opens)
+
+[FORMAT]
+max-line-length = 100
+
+[TYPECHECK]
+ignored-modules = onnxruntime, insightface
