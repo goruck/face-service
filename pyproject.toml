@@ -1,0 +1,24 @@
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+select = [
+  "F",   # Pyflakes
+  "E", "W",         # pycodestyle
+  "I",              # isort
+  "N",              # pep8-naming
+  "UP",             # pyupgrade
+  "B",              # flake8-bugbear
+  "PIE",            # flake8-pie
+  "RUF",            # ruff-specific
+  "PL",             # subset of pylint rules reimplemented by Ruff
+]
+
+ignore = [
+  "E501",   # line-length handled by formatter/your judgment
+  "PLR2004" # magic values in comparisons (noise for ML-ish code)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["face_service", "app"]
+combine-as-imports = true
