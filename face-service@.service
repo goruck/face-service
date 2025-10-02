@@ -6,9 +6,8 @@ After=network-online.target
 [Service]
 User=%i
 Group=%i
-EnvironmentFile=/etc/face-service/%i.env
+EnvironmentFile=/etc/face-service/face.env
 Environment=PYTHONUNBUFFERED=1
-WorkingDirectory=%h
 
 ExecStart=/usr/bin/bash -lc '\
   cd "${APP_DIR}"; \
