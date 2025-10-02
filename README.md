@@ -41,7 +41,7 @@ source .venv/bin/activate
 pip install --upgrade pip
 ```
 
-Install dependencies (choose one):
+Install dependencies (choose either CPU or GPU build):
 
 CPU build
 
@@ -53,6 +53,12 @@ GPU build (CUDA)
 
 ```bash
 pip install -r requirements-gpu.txt
+```
+
+Development tools (optional, for linting)
+
+```bash
+pip install -r requirements-dev.txt
 ```
 
 ### 3. Configuration
@@ -120,7 +126,7 @@ systemctl status face-service@lindo
 journalctl -u face-service@lindo -f
 ```
 
-### 3. API usage
+### 3. API
 
 Check service status
 
@@ -128,10 +134,19 @@ Check service status
 curl http://127.0.0.1:8000/status
 ```
 
-
-
 Analyze an image
 
 ```bash
 curl -F "file=@/path/to/image.jpg" http://127.0.0.1:8000/analyze
 ```
+
+## CI
+
+This repo ships with a GitHub Actions workflow at `.github/workflows/ci.yml`:
+
+- **cpu-smoke**: installs CPU requirements, lints (ruff), launches the app with `USE_CPU=true`, and curls `/status`.
+- **gpu-install**: verifies `requirements-gpu.txt` is installable on a standard runner (no GPU runtime test).
+
+If your app file/module isn’t `app.py` with `app = FastAPI()`, edit the CI step:
+```bash
+uvicorn <your_module>:app --host 127.0.0.1 --port 8000
